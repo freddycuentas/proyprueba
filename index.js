@@ -80,7 +80,7 @@ const servidor = http.createServer((solicitud, respuesta) => {
 
     responderJson(respuesta, 404, { error: 'Ruta no encontrada.' });
 });
-
+//cambios
 if (require.main === module) {
     const puerto = Number(process.env.PORT) || 3000;
     servidor.listen(puerto, () => {
