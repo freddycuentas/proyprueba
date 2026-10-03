@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="es">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="theme-color" content="#f4f5ef">
+	<title>Usuarios | Panel</title>
+	<style>
+		:root {
+			color-scheme: light;
+			--ink: #202823;
+			--muted: #68736b;
+			--paper: #f4f5ef;
+			--surface: #fffefa;
+			--line: #dfe4dc;
+			--green: #28634b;
+			--green-dark: #1c4a37;
+			--coral: #bd5a43;
+		}
+		* { box-sizing: border-box; }
+		body {
+			margin: 0;
+			background: var(--paper);
+			color: var(--ink);
+			font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+		}
+		header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			min-height: 76px;
+			padding: 0 7vw;
+			border-bottom: 1px solid var(--line);
+			background: var(--surface);
+		}
+		.brand { font-size: 17px; font-weight: 800; letter-spacing: 0; }
+		.brand span { color: var(--green); }
+		.top-note { color: var(--muted); font-size: 13px; }
+		main { width: min(1040px, 86vw); margin: 58px auto 80px; }
+		.eyebrow {
+			margin: 0 0 10px;
+			color: var(--coral);
+			font-size: 12px;
+			font-weight: 800;
+			text-transform: uppercase;
+		}
+		h1 { margin: 0; font-size: clamp(30px, 5vw, 46px); letter-spacing: 0; }
+		.intro { margin: 10px 0 34px; color: var(--muted); }
+		.workspace {
+			display: grid;
+			grid-template-columns: minmax(250px, 330px) 1fr;
+			border-top: 1px solid var(--line);
+			border-bottom: 1px solid var(--line);
+		}
+		.form-panel { padding: 25px 26px 28px 0; border-right: 1px solid var(--line); }
+		.list-panel { min-width: 0; padding: 25px 0 28px 30px; }
+		h2 { margin: 0 0 20px; font-size: 18px; letter-spacing: 0; }
+		label { display: block; margin: 17px 0 7px; font-size: 13px; font-weight: 700; }
+		input {
+			width: 100%;
+			min-height: 43px;
+			padding: 0 12px;
+			border: 1px solid #cbd3ca;
+			border-radius: 4px;
+			background: var(--surface);
+			color: var(--ink);
+			font: inherit;
+		}
+		input:focus { outline: 2px solid #83aa92; outline-offset: 1px; }
+		button {
+			min-height: 43px;
+			margin-top: 20px;
+			padding: 0 17px;
+			border: 0;
+			border-radius: 4px;
+			background: var(--green);
+			color: white;
+			font: inherit;
+			font-size: 14px;
+			font-weight: 700;
+			cursor: pointer;
+		}
+		button:hover { background: var(--green-dark); }
+		button:disabled { cursor: wait; opacity: .65; }
+		.message { min-height: 20px; margin: 12px 0 0; color: var(--coral); font-size: 13px; }
+		.list-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+		.count { color: var(--muted); font-size: 13px; }
+		.table-wrap { overflow-x: auto; }
+		table { width: 100%; border-collapse: collapse; text-align: left; }
+		th { padding: 11px 10px; border-bottom: 1px solid var(--line); color: var(--muted); font-size: 11px; text-transform: uppercase; }
+		td { padding: 14px 10px; border-bottom: 1px solid var(--line); font-size: 14px; }
+		th:first-child, td:first-child { padding-left: 0; }
+		.empty { padding: 24px 0; color: var(--muted); font-size: 14px; }
+		@media (max-width: 700px) {
+			header { min-height: 64px; padding: 0 6vw; }
+			.top-note { max-width: 125px; text-align: right; }
+			main { width: 88vw; margin-top: 38px; }
+			.workspace { grid-template-columns: 1fr; }
+			.form-panel { padding: 23px 0; border-right: 0; border-bottom: 1px solid var(--line); }
+			.list-panel { padding: 23px 0; }
+		}
+	</style>
+</head>
+<body>
+	<header>
+		<div class="brand">PANEL<span>/</span>USUARIOS</div>
+		<div class="top-note">Administración de usuarios</div>
+	</header>
+	<main>
+		<p class="eyebrow">Directorio</p>
+		<h1>Usuarios</h1>
+		<p class="intro">Crea y consulta los usuarios registrados.</p>
+		<div class="workspace">
+			<section class="form-panel" aria-labelledby="form-title">
+				<h2 id="form-title">Nuevo usuario</h2>
+				<form id="user-form">
+					<label for="nombre">Nombre completo</label>
+					<input id="nombre" name="nombre" autocomplete="name" required maxlength="100" placeholder="Ej. Ana Pérez">
+					<label for="correo">Correo electrónico</label>
+					<input id="correo" name="correo" type="email" autocomplete="email" required maxlength="200" placeholder="ana@correo.com">
+					<button id="submit-button" type="submit">Crear usuario</button>
+					<p id="message" class="message" role="status" aria-live="polite"></p>
+				</form>
+			</section>
+			<section class="list-panel" aria-labelledby="list-title">
+				<div class="list-heading">
+					<h2 id="list-title">Usuarios registrados</h2>
+					<span id="count" class="count">0 usuarios</span>
+				</div>
+				<div class="table-wrap">
+					<table>
+						<thead><tr><th>Nombre</th><th>Correo</th></tr></thead>
+						<tbody id="users-body"></tbody>
+					</table>
+					<p id="empty-state" class="empty">Todavía no hay usuarios.</p>
+				</div>
+			</section>
+		</div>
+	</main>
+	<script>
+		const form = document.querySelector('#user-form');
+		const button = document.querySelector('#submit-button');
+		const message = document.querySelector('#message');
+		const rows = document.querySelector('#users-body');
+		const count = document.querySelector('#count');
+		const emptyState = document.querySelector('#empty-state');
+
+		async function cargarUsuarios() {
+			const respuesta = await fetch('/api/usuarios');
+			const usuarios = await respuesta.json();
+			rows.replaceChildren();
+			usuarios.forEach((usuario) => {
+				const fila = document.createElement('tr');
+				const nombre = document.createElement('td');
+				const correo = document.createElement('td');
+				nombre.textContent = usuario.nombre;
+				correo.textContent = usuario.correo;
+				fila.append(nombre, correo);
+				rows.append(fila);
+			});
+			count.textContent = `${usuarios.length} ${usuarios.length === 1 ? 'usuario' : 'usuarios'}`;
+			emptyState.hidden = usuarios.length > 0;
+		}
+
+		form.addEventListener('submit', async (evento) => {
+			evento.preventDefault();
+			message.textContent = '';
+			button.disabled = true;
+			try {
+				const datos = Object.fromEntries(new FormData(form));
+				const respuesta = await fetch('/api/usuarios', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify(datos)
+				});
+				const resultado = await respuesta.json();
+				if (!respuesta.ok) throw new Error(resultado.error || 'No se pudo crear el usuario.');
+				form.reset();
+				message.style.color = 'var(--green)';
+				message.textContent = 'Usuario creado correctamente.';
+				await cargarUsuarios();
+			} catch (error) {
+				message.style.color = 'var(--coral)';
+				message.textContent = error.message;
+			} finally {
+				button.disabled = false;
+			}
+		});
+
+		cargarUsuarios().catch(() => {
+			message.textContent = 'No se pudo cargar la lista de usuarios.';
+		});
+	</script>
+</body>
+</html>
